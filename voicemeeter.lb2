@@ -1,0 +1,68 @@
+[extension_name]
+Voicemeeter Connect
+[extension_info]
+Connects Voicemeeter to Lioranboard 2.0
+[insert_external]
+
+[insert_command]
+LB.extCommand('set volume', 3355443 , 52, {
+              'Base': ['base', 14, '10'],//get from Voicemeeter
+              'Value': ['value', 15, '0.5'],
+              'Variable': ['variable', 14, '']
+});
+LB.extCommand('get volume', 3355443 , 52, {
+              'Volume': ['volume', 15, '0.5'],
+              'Variable': ['variable', 14, '']
+});
+LB.extCommand('db to Volume', 3355443 , 52, {
+              'db': ['db', 15, '-6.0'],
+              'Variable': ['variable', 14, '']
+});
+[insert_hook]
+case "logarithm":{
+    tp_logarithm(LioranBoardJSON.Base, LioranBoardJSON.Value,LioranBoardJSON.Variable, LioranBoardJSON.FromButton);
+} break;
+case "Volume to db":{
+    tp_vol_to_db(LioranBoardJSON.Volume,LioranBoardJSON.Variable, LioranBoardJSON.FromButton);
+} break;
+case "db to Volume":{
+    tp_db_to_vol(LioranBoardJSON.db,LioranBoardJSON.Variable, LioranBoardJSON.FromButton);
+} break;
+[insert_script]
+function tp_logarithm(base, value, variable, button_ID) {
+    var log = Math.log(value) / Math.log(base);
+    
+    if ( variable.includes(".") ) {
+        const scopedVariable = variable.split(".");
+		LB.setVariable(scopedVariable[1], log, scopedVariable[0]);
+    } else {
+        LB.setVariable(variable, log, buttonId = button_ID);
+    }
+}
+function tp_vol_to_db(vol, variable, button_ID) {
+    if (vol <= 0) {
+        vol = 0.01;
+    }
+    var log = Math.log(vol) / Math.log(10);
+    var db = log * 20;
+    if ( variable.includes(".") ) {
+        const scopedVariable = variable.split(".");
+		LB.setVariable(scopedVariable[1], log, scopedVariable[0]);
+    } else {
+        LB.setVariable(variable, db, buttonId = button_ID);
+    }
+}
+function tp_db_to_vol(db, variable, button_ID) {
+    if (db <= -90) {
+        db = -85;
+    }
+    var vol = Math.pow(10, db / 20);
+    
+    if ( variable.includes(".") ) {
+        const scopedVariable = variable.split(".");
+		LB.setVariable(scopedVariable[1], log, scopedVariable[0]);
+    } else {
+        LB.setVariable(variable, vol, buttonId = button_ID);
+    }
+}
+[insert_over]
