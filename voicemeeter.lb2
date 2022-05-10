@@ -3,7 +3,7 @@ Voicemeeter Connect
 [extension_info]
 Connects Voicemeeter to Lioranboard 2.0
 [insert_external]
-
+<script src="bundle.js"></script>
 [insert_command]
 LB.extCommand('set volume', 3355443 , 52, {
               'Base': ['base', 14, '10'],//get from Voicemeeter
