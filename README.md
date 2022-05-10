@@ -1,5 +1,5 @@
 # Voicemeeter Control
-Converts Decibels into Volume and Vice Versa (also included is logarithmic math)
+Adds Control over Voicemeeter to Lioranboard 2.0
 
 ## Potential Warning ##
 Only use in "Local Variable Persist" "ON" or "checked" or "ticked" buttons
