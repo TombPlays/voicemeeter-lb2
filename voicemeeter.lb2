@@ -7,30 +7,44 @@ Connects Voicemeeter to Lioranboard 2.0
 [insert_command]
 LB.extCommand('set volume', 3355443 , 52, {
               'Bus': ['bus', 14, '10'],//get from Voicemeeter
-              'Volume': ['volume', 15, '0.5'],
-              'Variable': ['variable', 14, '']
+              'Volume': ['volume', 15, '0.5']
 });
 LB.extCommand('get volume', 3355443 , 52, {
-              'Bus': ['bus', 15, '0.5'],
+              'Bus': ['bus', 14, ''],
               'Variable': ['variable', 14, '']
 });
 [insert_hook]
 case "set volume":{
-    tp_set_volume(LioranBoardJSON.Bus, LioranBoardJSON.Volume,LioranBoardJSON.Variable, LioranBoardJSON.FromButton);
+    tp_set_volume(LioranBoardJSON.Bus, LioranBoardJSON.Volume);
 } break;
 case "get volume":{
     tp_get_volume(LioranBoardJSON.Bus,LioranBoardJSON.Variable, LioranBoardJSON.FromButton);
 } break;
 [insert_script]
 function tp_set_volume(bus, volume, variable, button_ID) {
-    
-    
-    if ( variable.includes(".") ) {
-        const scopedVariable = variable.split(".");
-		LB.setVariable(scopedVariable[1], log, scopedVariable[0]);
-    } else {
-        LB.setVariable(variable, log, buttonId = button_ID);
-    }
+    import { Voicemeeter, StripProperties } from "voicemeeter-connector";
+
+    Voicemeeter.init().then(async (vm) => {
+        // Connect to your voicemeeter client
+        vm.connect();
+
+        // Sets gain of strip 0 to -10db
+        await vm.setStripParameter(0, StripProperties.Gain, -10);
+
+        // Print gain
+        console.log(vm.getStripParameter(0, StripProperties.Gain));
+
+        // Attach event handler
+        vm.attachChangeEvent(() => {
+            console.log("Something changed!");
+        });
+
+        // Disconnect voicemeeter client
+        setTimeout(() => {
+            vm.disconnect();
+            process.exit(0);
+        }, 5000);
+    });
 }
 function tp_get_volume(bus, variable, button_ID) {
     
